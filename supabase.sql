@@ -24,6 +24,9 @@ create policy "guests read gallery" on public.photos
   for select to authenticated using (true);
 create policy "guests delete own photos" on public.photos
   for delete to authenticated using (guest_id = auth.uid());
+create policy "couple deletes photos" on public.photos
+  for delete to authenticated
+  using ((auth.jwt() -> 'app_metadata' ->> 'role') = 'couple');
 
 grant select, insert, delete on public.photos to authenticated;
 
@@ -41,3 +44,9 @@ create policy "guests upload memories" on storage.objects
 create policy "owners remove memories" on storage.objects
   for delete to authenticated
   using (bucket_id = 'memories' and owner_id = auth.uid()::text);
+create policy "couple removes memories" on storage.objects
+  for delete to authenticated
+  using (
+    bucket_id = 'memories'
+    and (auth.jwt() -> 'app_metadata' ->> 'role') = 'couple'
+  );

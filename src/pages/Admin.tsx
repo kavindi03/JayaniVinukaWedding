@@ -15,6 +15,7 @@ export default function Admin() {
   const [idx, setIdx] = useState(0)
   const [selected, setSelected] = useState<Photo | null>(null)
   const [error, setError] = useState('')
+  const isCouple = session?.user.app_metadata.role === 'couple'
 
   useEffect(() => {
     supabase.auth.getSession()
@@ -45,6 +46,10 @@ export default function Admin() {
   const base = location.origin + location.pathname
 
   async function remove(photo: Photo) {
+    if (!isCouple) {
+      setError('Only the couple admin account can delete photos.')
+      return
+    }
     if (!confirm('Delete this photo for everyone?')) return
     setError('')
     const { error: storageError } = await supabase.storage.from('memories').remove([photo.path])
@@ -58,10 +63,14 @@ export default function Admin() {
   async function login() {
     const { data, error: loginError } = await supabase.auth.signInWithPassword({ email, password: pw })
     if (loginError) setError(loginError.message)
-    else { setError(''); setSession(data.session) }
+    else if (data.session?.user.app_metadata.role !== 'couple') {
+      setSession(null)
+      setError('This account is not authorized for the couple admin page.')
+      await supabase.auth.signOut()
+    } else { setError(''); setSession(data.session) }
   }
 
-  if (!session) return (
+  if (!session || !isCouple) return (
     <main className="wrap">
       <section className="card">
         <h1>Couple login</h1>
