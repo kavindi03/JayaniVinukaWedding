@@ -45,12 +45,12 @@ export default function Admin() {
   const base = location.origin + location.pathname
 
   async function remove(photo: Photo) {
-    if (photo.guest_id !== session?.user.id || !confirm('Remove your photo from the gallery?')) return
+    if (!confirm('Delete this photo for everyone?')) return
     setError('')
     const { error: storageError } = await supabase.storage.from('memories').remove([photo.path])
-    if (storageError) { setError(storageError.message); return }
+    if (storageError) { setError('File delete failed: ' + storageError.message); return }
     const { error: deleteError } = await supabase.from('photos').delete().eq('id', photo.id)
-    if (deleteError) { setError(deleteError.message); return }
+    if (deleteError) { setError('Record delete failed: ' + deleteError.message); return }
     if (selected?.id === photo.id) setSelected(null)
     load().catch(reason => setError(reason instanceof Error ? reason.message : 'Could not refresh photos.'))
   }
@@ -88,18 +88,16 @@ export default function Admin() {
 
       <div className="grid">
         {list.map(photo => (
-            <figure key={photo.id}>
-              <button className="photo-open" onClick={() => setSelected(photo)} aria-label={`View photo from ${photo.guest_name}`}>
-                <img src={urlOf(photo.path)} loading="lazy" alt={photo.caption || `Shared by ${photo.guest_name}`} />
-              </button>
-              <figcaption>{photo.guest_name}{photo.caption ? ` — ${photo.caption}` : ''}</figcaption>
-              <div className="acts">
-                <a href={urlOf(photo.path)} download target="_blank" rel="noreferrer" aria-label="Download photo"><Download size={16} /></a>
-                {photo.guest_id === session.user.id && (
-                  <button className="delete-button" onClick={() => void remove(photo)} aria-label="Remove your photo"><Trash2 size={16} /></button>
-                )}
-              </div>
-            </figure>
+          <figure key={photo.id}>
+            <button className="photo-open" onClick={() => setSelected(photo)} aria-label={`View photo from ${photo.guest_name}`}>
+              <img src={urlOf(photo.path)} loading="lazy" alt={photo.caption || `Shared by ${photo.guest_name}`} />
+            </button>
+            <figcaption>Table {photo.table_no} · {photo.guest_name}{photo.caption ? ` — ${photo.caption}` : ''}</figcaption>
+            <div className="acts">
+              <a href={urlOf(photo.path)} download target="_blank" rel="noreferrer" aria-label="Download photo"><Download size={16} /></a>
+              <button className="delete-button" onClick={() => void remove(photo)} aria-label="Delete photo"><Trash2 size={16} /></button>
+            </div>
+          </figure>
         ))}
       </div>
 
@@ -118,7 +116,7 @@ export default function Admin() {
       {show && list.length > 0 && (
         <div className="slides" onClick={() => setShow(false)}>
           <img src={urlOf(list[idx % list.length].path)} alt="Wedding slideshow" />
-          <p>{list[idx % list.length].guest_name}</p>
+          <p>{list[idx % list.length].guest_name} · Table {list[idx % list.length].table_no}</p>
           <button className="close" onClick={() => setShow(false)} aria-label="Close slideshow"><X size={28} /></button>
         </div>
       )}
@@ -127,7 +125,7 @@ export default function Admin() {
         <div className="photo-viewer" role="dialog" aria-modal="true" aria-label="Full-size photo" onClick={() => setSelected(null)}>
           <button className="close" onClick={() => setSelected(null)} aria-label="Close photo"><X size={28} /></button>
           <img src={urlOf(selected.path)} alt={selected.caption || `Shared by ${selected.guest_name}`} onClick={event => event.stopPropagation()} />
-          <p>{selected.caption || `Shared by ${selected.guest_name}`}</p>
+          <p>{selected.caption || `Shared by ${selected.guest_name}`} · Table {selected.table_no}</p>
         </div>
       )}
     </main>
