@@ -56,9 +56,8 @@ export default function Guest() {
   }
 
   useEffect(() => {
-    if (!guestId) return
     loadGallery().catch(reason => setError(reason instanceof Error ? reason.message : 'Could not load photos.'))
-  }, [guestId])
+  }, [])
 
   useEffect(() => {
     if (!selected) return

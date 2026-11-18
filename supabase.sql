@@ -17,18 +17,17 @@ drop policy if exists "guests insert own photos" on public.photos;
 drop policy if exists "guests read gallery" on public.photos;
 drop policy if exists "guests delete own photos" on public.photos;
 drop policy if exists "couple deletes photos" on public.photos;
+drop policy if exists "public read gallery" on public.photos;
 
 create policy "guests insert own photos" on public.photos
   for insert to authenticated with check (guest_id = auth.uid());
-create policy "guests read gallery" on public.photos
-  for select to authenticated using (true);
+create policy "public read gallery" on public.photos
+  for select to anon, authenticated using (true);
 create policy "guests delete own photos" on public.photos
   for delete to authenticated using (guest_id = auth.uid());
-create policy "couple deletes photos" on public.photos
-  for delete to authenticated
-  using ((auth.jwt() -> 'app_metadata' ->> 'role') = 'couple');
 
-grant select, insert, delete on public.photos to authenticated;
+grant select on public.photos to anon, authenticated;
+grant insert, delete on public.photos to authenticated;
 
 insert into storage.buckets(id, name, public)
 values ('memories', 'memories', true)
@@ -45,9 +44,3 @@ create policy "guests upload memories" on storage.objects
 create policy "owners remove memories" on storage.objects
   for delete to authenticated
   using (bucket_id = 'memories' and owner_id = auth.uid()::text);
-create policy "couple removes memories" on storage.objects
-  for delete to authenticated
-  using (
-    bucket_id = 'memories'
-    and (auth.jwt() -> 'app_metadata' ->> 'role') = 'couple'
-  );
