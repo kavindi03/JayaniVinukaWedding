@@ -38,6 +38,7 @@ drop policy if exists "guests upload" on storage.objects;
 drop policy if exists "couple removes" on storage.objects;
 drop policy if exists "guests upload memories" on storage.objects;
 drop policy if exists "owners remove memories" on storage.objects;
+drop policy if exists "couple removes memories" on storage.objects;
 
 create policy "guests upload memories" on storage.objects
   for insert to authenticated with check (bucket_id = 'memories');

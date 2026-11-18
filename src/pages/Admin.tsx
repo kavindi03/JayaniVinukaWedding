@@ -52,10 +52,13 @@ export default function Admin() {
     }
     if (!confirm('Delete this photo for everyone?')) return
     setError('')
-    const { error: storageError } = await supabase.storage.from('memories').remove([photo.path])
-    if (storageError) { setError('File delete failed: ' + storageError.message); return }
     const { error: deleteError } = await supabase.from('photos').delete().eq('id', photo.id)
     if (deleteError) { setError('Record delete failed: ' + deleteError.message); return }
+
+    const { error: storageError } = await supabase.storage.from('memories').remove([photo.path])
+    if (storageError) {
+      setError('Photo removed from the gallery, but file cleanup failed: ' + storageError.message)
+    }
     if (selected?.id === photo.id) setSelected(null)
     load().catch(reason => setError(reason instanceof Error ? reason.message : 'Could not refresh photos.'))
   }
