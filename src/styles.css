@@ -1,0 +1,124 @@
+:root {
+  --ink: #512d3b;
+  --rose: #e88eaa;
+  --rose-dark: #c65e83;
+  --rose-light: #f9dce6;
+  --paper: #fffafd;
+}
+
+* { box-sizing: border-box }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: Outfit, sans-serif;
+  background-image: radial-gradient(circle at 10% 0, #fce7ee 0, transparent 42%), radial-gradient(circle at 100% 30%, #fff0f5 0, transparent 38%);
+}
+h1, h2 { font-family: 'Cormorant Garamond', serif; font-weight: 700 }
+h1 { font-size: 2.6rem; margin: .2em 0 }
+h2 { font-size: 2rem; margin: 0 }
+.wrap { max-width: 700px; margin: 0 auto; padding: 24px 16px 60px }
+.wrap.wide { max-width: 1100px }
+.hero { text-align: center; padding: 24px 0 }
+.hero p { opacity: .7; margin: 0 }
+.pulse { color: var(--rose); animation: pulse 2s infinite }
+@keyframes pulse { 50% { transform: scale(1.2) } }
+.card {
+  background: #fff;
+  border: 1px solid #f3d9e2;
+  border-radius: 22px;
+  padding: 20px;
+  display: grid;
+  gap: 12px;
+  box-shadow: 0 10px 30px #512d3b12;
+}
+input, select {
+  padding: 13px 14px;
+  border: 1px solid #e8cbd5;
+  border-radius: 12px;
+  font: inherit;
+  background: #fff;
+  color: var(--ink);
+}
+input:focus, select:focus { outline: 2px solid var(--rose) }
+.btn {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  background: var(--rose);
+  color: #fff;
+  border: 0;
+  border-radius: 999px;
+  padding: 14px 22px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .15s, background .15s;
+}
+.btn:hover { transform: translateY(-2px); background: var(--rose-dark) }
+.btn.disabled { opacity: .65; pointer-events: none }
+.busy { text-align: center; color: var(--rose-dark) }
+.error { color: #a52f54; background: #fff0f4; border-radius: 12px; padding: 12px 14px; overflow-wrap: anywhere }
+.empty { opacity: .65; display: flex; gap: 8px; align-items: center }
+.gallery-heading { display: flex; align-items: end; justify-content: space-between; gap: 12px; margin: 30px 0 16px }
+.gallery-heading p { margin: 4px 0 0; opacity: .65 }
+.latest-label { color: var(--rose-dark); font-size: .9rem; font-weight: 600 }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0 }
+.grid { columns: 2; column-gap: 12px }
+.wide .grid { columns: 4 }
+@media(max-width: 700px) { .wide .grid { columns: 2 } }
+figure {
+  margin: 0 0 12px;
+  break-inside: avoid;
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 6px 18px #512d3b14;
+}
+.photo-open { display: block; width: 100%; padding: 0; border: 0; background: #fff; cursor: zoom-in }
+figure img { width: 100%; display: block }
+figcaption { padding: 9px 10px; font-size: .85rem; display: grid; gap: 3px }
+figcaption small { color: #987782 }
+.acts { position: absolute; top: 7px; right: 7px; display: flex; gap: 6px }
+.acts button, .acts a {
+  background: #fffF;
+  border: 0;
+  border-radius: 999px;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  color: var(--ink);
+  box-shadow: 0 2px 8px #512d3b20;
+  cursor: pointer;
+  text-decoration: none;
+}
+.acts button:disabled { opacity: .55; cursor: wait }
+.acts .delete-button { min-width: 34px; padding: 0; color: #7a5361 }
+.bar { display: flex; gap: 10px; flex-wrap: wrap; margin: 12px 0 20px }
+.qrgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px }
+.qrcard { background: #fff; border: 2px dashed var(--rose); border-radius: 18px; padding: 16px; display: grid; justify-items: center; gap: 4px; font-family: 'Cormorant Garamond', serif }
+.qrcard b { font-size: 1.5rem }
+.qrcard small { font-family: Outfit }
+.slides, .photo-viewer {
+  position: fixed;
+  inset: 0;
+  background: #26171fd9;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 12px;
+  z-index: 9;
+  padding: 48px 16px 24px;
+}
+.slides img, .photo-viewer img { max-width: 94vw; max-height: 82vh; object-fit: contain; border-radius: 12px }
+.slides p, .photo-viewer p { color: #fff; margin: 0; text-align: center }
+.close { position: absolute; top: 16px; right: 16px; color: #fff; background: transparent; border: 0; cursor: pointer }
+@keyframes fade { from { opacity: 0; transform: scale(.97) } }
+@media print { .bar, .grid, h1, .slides { display: none } }
+@media(prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important } }
